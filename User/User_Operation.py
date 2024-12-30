@@ -7,7 +7,17 @@ import base64
 import json
 from pydrive2.drive import GoogleDrive
 from pydrive2.auth import GoogleAuth
+import json
 
+# Buat credentials.json dari Streamlit Secrets
+if "GOOGLE_CREDENTIALS" in st.secrets:
+    with open("credentials.json", "w") as f:
+        f.write(json.dumps(st.secrets["GOOGLE_CREDENTIALS"]))
+
+# Pastikan file berhasil dibuat
+if not os.path.exists("credentials.json"):
+    st.error("Failed to create credentials.json. Please check your Streamlit Secrets.")
+ 
 ### LOGIN FUNCTION ###
 # Decode service account
 # def get_account_credentials(key):

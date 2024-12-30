@@ -6,7 +6,17 @@ from io import BytesIO
 from pydrive2.drive import GoogleDrive
 from pydrive2.auth import GoogleAuth
 import sys
+import json
 
+# Buat credentials.json dari Streamlit Secrets
+if "GOOGLE_CREDENTIALS" in st.secrets:
+    with open("credentials.json", "w") as f:
+        f.write(json.dumps(st.secrets["GOOGLE_CREDENTIALS"]))
+
+# Pastikan file berhasil dibuat
+if not os.path.exists("credentials.json"):
+    st.error("Failed to create credentials.json. Please check your Streamlit Secrets.")
+    
 ### LOGINNNNNNNN ###
 gauth = GoogleAuth()
 gauth.LoadCredentialsFile("credentials.json") 
