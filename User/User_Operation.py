@@ -7,61 +7,23 @@ import base64
 import json
 from pydrive2.drive import GoogleDrive
 from pydrive2.auth import GoogleAuth
-import json
 
+import os
 
-# Buat credentials.json dari Streamlit Secrets
-if "GOOGLE_CREDENTIALS" in st.secrets:
-    with open("credentials.json", "w") as f:
-        f.write(json.dumps(st.secrets["GOOGLE_CREDENTIALS"]))
-
-# Pastikan file berhasil dibuat
-if not os.path.exists("credentials.json"):
-    st.error("Failed to create credentials.json. Please check your Streamlit Secrets.")
-else:
-    st.write("credentials.json berhasil dibuat")
-    
-### LOGIN FUNCTION ###
-# Decode service account
-# def get_account_credentials(key):
-#     base64_encoded_service_account = key
-#     # Step 1: Decode the Base64-encoded string
-#     decoded_service_account = base64.b64decode(base64_encoded_service_account).decode('utf-8')
-#     # Step 2: Parse the decoded string as JSON
-#     service_credentials = json.loads(decoded_service_account)
-#     return service_credentials
-
-# def login_with_service_account():
-#     settings = {
-#                 "client_config_backend": "service",
-#                 "service_config": {
-#                     "client_json_dict": get_account_credentials(st.secrets.BASE64_ENCODED_SERVICE_ACCOUNT), # from secrets.toml
-#                 }
-#             }
-#     gauth = GoogleAuth(settings=settings)
-#     gauth.ServiceAuth()
-#     return gauth
-
-# ### LOGIN ###
-# drive = GoogleDrive(login_with_service_account())
-# print('successful login with user role')
-
-from pydrive2.auth import GoogleAuth
-from pydrive2.drive import GoogleDrive
-
-# Autentikasi Google Drive
+# Autentikasi ke Google Drive
 gauth = GoogleAuth()
-gauth.LoadCredentialsFile("credentials.json") 
+if os.path.exists("credentials.json"):
+    gauth.LoadCredentialsFile("credentials.json")
+else:
+    raise FileNotFoundError("credentials.json not found. Please ensure it is created in main.py.")
+
 if gauth.access_token_expired:
-    # Refresh token jika sudah kadaluarsa
     gauth.Refresh()
 else:
-    # Otorisasi jika token masih valid
     gauth.Authorize()
 
-# Koneksi ke Google Drive
 drive = GoogleDrive(gauth)
-print("Login successful with cesgs.unair@gmail.com")
+print("Successfully logged in with user role.")
 
 ### FUNCTIONNNNNNN ###
 # Function to get file id by title
