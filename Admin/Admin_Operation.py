@@ -7,22 +7,24 @@ from pydrive2.drive import GoogleDrive
 from pydrive2.auth import GoogleAuth
 import sys
 
-import os
+### LOGINNNNNNNN ###
+from pydrive2.auth import GoogleAuth
+from pydrive2.drive import GoogleDrive
+import streamlit as st
 
-# Autentikasi ke Google Drive
-gauth = GoogleAuth()
-if os.path.exists("credentials.json"):
-    gauth.LoadCredentialsFile("credentials.json")
-else:
-    raise FileNotFoundError("credentials.json not found. Please ensure it is created in main.py.")
+# Autentikasi Google Drive menggunakan Streamlit Secrets
+gauth = GoogleAuth(settings={
+    "client_config_backend": "service",
+    "service_config": {
+        "client_json_dict": dict(st.secrets["GOOGLE_CREDENTIALS"])
+    }
+})
+gauth.ServiceAuth()
 
-if gauth.access_token_expired:
-    gauth.Refresh()
-else:
-    gauth.Authorize()
-
+# Koneksi ke Google Drive
 drive = GoogleDrive(gauth)
-print("Successfully logged in with admin role.")
+print("Login successful with admin role")
+
 
 ### FUNCTIONNNNNNN ###
 # Function to get file id by title

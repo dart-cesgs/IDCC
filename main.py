@@ -1,21 +1,4 @@
 import streamlit as st
-import json
-import os
-
-# Buat credentials.json dari Streamlit Secrets
-if "GOOGLE_CREDENTIALS" in st.secrets:
-    with open("credentials.json", "w") as f:
-        json.dump(dict(st.secrets["GOOGLE_CREDENTIALS"]), f)
-
-# Pastikan file berhasil dibuat
-if not os.path.exists("credentials.json"):
-    st.error("Failed to create credentials.json. Please check your Streamlit Secrets.")
-else:
-    st.write("credentials.json successfully created!")
-  
-st.write("Current working directory:", os.getcwd())
-st.write("credentials.json exists:", os.path.exists("credentials.json"))
-  
 from io import BytesIO
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
@@ -26,6 +9,11 @@ from User.User_Operation import get_list_of_all_folders_forusers
 
 # Streamlit App
 st.title("Google Drive File Manager")
+
+# Pastikan Streamlit Secrets berisi konfigurasi Google API
+if "GOOGLE_CREDENTIALS" not in st.secrets:
+    st.error("Missing Google API credentials in secrets.")
+    st.stop()
 
 # Koneksi ke Google Sheets
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -73,15 +61,12 @@ def reset_cache():
 
 # Fungsi untuk menampilkan tombol Reset Cache
 def show_reset_cache_button():
-    # Gunakan kunci dinamis berdasarkan waktu atau elemen unik lainnya
-    unique_key = f"reset_cache_{os.urandom(8).hex()}"
-    if st.button("Reset Cache", key=unique_key):
+    if st.button("Reset Cache", key="reset_cache"):
         reset_cache()
-
+    
     if st.session_state.cache_reset:
         st.toast('Cache telah di-reset!', icon='🔄')
         st.session_state.cache_reset = False
-
 
 # Fungsi untuk mencatat aktivitas
 def log_activity(activity):
