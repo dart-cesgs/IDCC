@@ -8,8 +8,6 @@ from pydrive2.auth import GoogleAuth
 import sys
 
 ### LOGINNNNNNNN ###
-from pydrive2.auth import GoogleAuth
-
 gauth = GoogleAuth(settings={
     "client_config_backend": "service",
     "service_config": {

@@ -9,12 +9,6 @@ from pydrive2.drive import GoogleDrive
 from pydrive2.auth import GoogleAuth
 
 ### LOGIN FUNCTION ###
-
-from pydrive2.auth import GoogleAuth
-from pydrive2.drive import GoogleDrive
-
-from pydrive2.auth import GoogleAuth
-
 gauth = GoogleAuth(settings={
     "client_config_backend": "service",
     "service_config": {
