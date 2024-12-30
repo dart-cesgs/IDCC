@@ -23,3 +23,4 @@ FILE BERIKUT BERISI INFORMASI RAHASIA, PASTIKAN TIDAK TERSEBAR
 - credentials
 - service-account-for-user
 - spreadsheet-connector
+- spreadsheet: https://docs.google.com/spreadsheets/d/1fMFu-6pcs8Fvi9vLrsaVEt3-EXWDpLIvFUt0aNV0TfI/edit?pli=1&gid=0#gid=0
