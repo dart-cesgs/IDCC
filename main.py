@@ -13,7 +13,6 @@ if not os.path.exists("credentials.json"):
 else:
     st.write("credentials.json successfully created!")
   
-import os
 st.write("Current working directory:", os.getcwd())
 st.write("credentials.json exists:", os.path.exists("credentials.json"))
   
