@@ -9,6 +9,7 @@ from User.User_Operation import get_list_of_all_folders_forusers
 import json
 import os
 
+
 # Buat credentials.json dari Streamlit Secrets
 if "GOOGLE_CREDENTIALS" in st.secrets:
     with open("credentials.json", "w") as f:
@@ -17,6 +18,8 @@ if "GOOGLE_CREDENTIALS" in st.secrets:
 # Pastikan file berhasil dibuat
 if not os.path.exists("credentials.json"):
     st.error("Failed to create credentials.json. Please check your Streamlit Secrets.")
+else:
+    st.write("credentials.json berhasil dibuat")
  
 # Streamlit App
 st.title("Google Drive File Manager")
