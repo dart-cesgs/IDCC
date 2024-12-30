@@ -19,7 +19,11 @@ if not os.path.exists("credentials.json"):
     st.error("Failed to create credentials.json. Please check your Streamlit Secrets.")
 else:
     st.write("credentials.json successfully created!")
-    
+  
+import os
+st.write("Current working directory:", os.getcwd())
+st.write("credentials.json exists:", os.path.exists("credentials.json"))
+  
 # Streamlit App
 st.title("Google Drive File Manager")
 
