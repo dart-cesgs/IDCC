@@ -5,3 +5,4 @@ python-dotenv==1.0.1
 XlsxWriter==3.2.0
 st-gsheets-connection==0.1.0
 google-auth==2.37.0
+oauth2client==4.1.3

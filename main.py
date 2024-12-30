@@ -4,28 +4,11 @@ import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 import time
 import datetime
-from pydrive2.drive import GoogleDrive
-from pydrive2.auth import GoogleAuth
-
-# Streamlit App
-st.title("Google Drive File Manager")
-
-# Pastikan Streamlit Secrets berisi konfigurasi Google API
-if "GOOGLE_CREDENTIALS" not in st.secrets:
-    st.error("Missing Google API credentials in secrets.")
-    st.stop()
-
 from Admin.Admin_Operation import get_list_of_all_folders
 from User.User_Operation import get_list_of_all_folders_forusers
 
-gauth = GoogleAuth(settings={
-    "client_config_backend": "service",
-    "service_config": {
-        "client_json_dict": dict(st.secrets["GOOGLE_CREDENTIALS"])
-    }
-})
-gauth.ServiceAuth()
-
+# Streamlit App
+st.title("Google Drive File Manager")
 
 # Koneksi ke Google Sheets
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -34,19 +17,32 @@ logs_data = conn.read(worksheet='Logs', ttl=1800)
 data['Password'] = data['Password'].astype(int).astype(str)
 
 # Define session state jika belum ada
-for key, default in {
-    "logged_in": False,
-    "role": None,
-    "name": None,
-    "connection": None,
-    "database": data,
-    "logs": logs_data['Activity'].values.tolist(),
-    "activity": [],
-    "folder": [],
-    "cache_reset": False,
-}.items():
-    if key not in st.session_state:
-        st.session_state[key] = default
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if 'role' not in st.session_state:
+    st.session_state.role = None
+
+if 'name' not in st.session_state:
+    st.session_state.name = None
+
+if 'connection' not in st.session_state:
+    st.session_state.connection = None
+
+if 'database' not in st.session_state:
+    st.session_state.database = data
+
+if 'logs' not in st.session_state:
+    st.session_state.logs = logs_data['Activity'].values.tolist()
+
+if 'activity' not in st.session_state:
+    st.session_state.activity = []
+
+if 'folder' not in st.session_state:
+    st.session_state.folder = []
+
+if 'cache_reset' not in st.session_state:
+    st.session_state.cache_reset = False
 
 # Fungsi untuk reset cache
 def reset_cache():
@@ -62,6 +58,7 @@ def reset_cache():
 def show_reset_cache_button():
     if st.button("Reset Cache", key="reset_cache"):
         reset_cache()
+    
     if st.session_state.cache_reset:
         st.toast('Cache telah di-reset!', icon='🔄')
         st.session_state.cache_reset = False
@@ -80,7 +77,9 @@ def login():
     if st.button("Log in"):
         # Check if the username and password match any entry in the DataFrame
         user_row = data[(data['Username'] == username) & (data['Password'] == password)]
+        
         if not user_row.empty:
+            # Tetapkan role (ADMIN/USER) berdasarkan Google Sheets
             st.session_state.logged_in = True
             st.session_state.connection = conn
             st.session_state.role = user_row.iloc[0]['Role']
@@ -90,8 +89,10 @@ def login():
             time.sleep(0.3)
             st.rerun()
         else:
+            # Jika tidak cocok, tampilkan error
             st.error('Username/password is incorrect')
-    show_reset_cache_button()
+    show_reset_cache_button()  # Tampilkan tombol reset cache
+
 
 # Fungsi Logout
 def logout():
@@ -101,13 +102,11 @@ def logout():
         st.session_state.logs.extend(st.session_state.activity)
         new_data = pd.DataFrame({'Activity': st.session_state.logs})
         st.session_state.connection.update(data=new_data, worksheet='Logs')
-        st.session_state.update({
-            "activity": [],
-            "selected_folders": [],
-            "name": None,
-            "role": None,
-            "logged_in": False,
-        })
+        st.session_state.activity = []
+        st.session_state.selected_folders = []
+        st.session_state.name = None
+        st.session_state.role = None
+        st.session_state.logged_in = False
         st.rerun()
 
 # DEFINE LOGIN - LOGOUT PAGES
@@ -125,23 +124,28 @@ create_update_user_page = st.Page("User/Create_Update.py", title="Create", icon=
 read_user_page = st.Page("User/Read.py", title="Read", icon=":material/table:")
 
 # PAGINATION
-if st.session_state.logged_in:
-    if st.session_state.role == 'ADMIN':
-        st.session_state.folder = get_list_of_all_folders()
-        pg = st.navigation({
+if st.session_state.logged_in and st.session_state.role == 'ADMIN':
+    st.session_state.folder = get_list_of_all_folders()
+    pg = st.navigation(
+        {
             "Operations": [create_update_page, read_page, delete_page, maintenance_page],
-            "Account": [logout_page],
-        })
-    elif st.session_state.role == 'USER':
-        st.session_state.folder = get_list_of_all_folders_forusers()
-        pg = st.navigation({
+            "Account": [logout_page]
+        }
+    )
+
+elif st.session_state.logged_in and st.session_state.role == 'USER':
+    st.session_state.folder = get_list_of_all_folders_forusers()
+    pg = st.navigation(
+        {
             "Operations": [create_update_user_page, read_user_page],
-            "Account": [logout_page],
-        })
+            "Account": [logout_page]
+        }
+    )
 else:
     pg = st.navigation([login_page])
 
 pg.run()
 
+# Tambahkan logging saat file atau folder diakses
 if 'selected_folders' in st.session_state:
     log_activity(f"accessed folder {st.session_state.selected_folders[-1]['title'] if st.session_state.selected_folders else 'root'}")
