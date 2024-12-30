@@ -4,7 +4,8 @@ import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 import time
 import datetime
-
+from pydrive2.drive import GoogleDrive
+from pydrive2.auth import GoogleAuth
 
 # Streamlit App
 st.title("Google Drive File Manager")
@@ -16,6 +17,15 @@ if "GOOGLE_CREDENTIALS" not in st.secrets:
 
 from Admin.Admin_Operation import get_list_of_all_folders
 from User.User_Operation import get_list_of_all_folders_forusers
+
+gauth = GoogleAuth(settings={
+    "client_config_backend": "service",
+    "service_config": {
+        "client_json_dict": dict(st.secrets["GOOGLE_CREDENTIALS"])
+    }
+})
+gauth.ServiceAuth()
+
 
 # Koneksi ke Google Sheets
 conn = st.connection("gsheets", type=GSheetsConnection)
