@@ -11,3 +11,6 @@ __pycache__/
 
 # ENV
 .env
+Google Drive API.ipynb
+service-account-for-user.json
+spreadsheet-connector.json
