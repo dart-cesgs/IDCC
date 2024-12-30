@@ -69,12 +69,15 @@ def reset_cache():
 
 # Fungsi untuk menampilkan tombol Reset Cache
 def show_reset_cache_button():
-    if st.button("Reset Cache", key="reset_cache"):
+    # Gunakan kunci dinamis berdasarkan waktu atau elemen unik lainnya
+    unique_key = f"reset_cache_{os.urandom(8).hex()}"
+    if st.button("Reset Cache", key=unique_key):
         reset_cache()
-    
+
     if st.session_state.cache_reset:
         st.toast('Cache telah di-reset!', icon='🔄')
         st.session_state.cache_reset = False
+
 
 # Fungsi untuk mencatat aktivitas
 def log_activity(activity):
