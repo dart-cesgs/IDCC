@@ -8,14 +8,14 @@ from pydrive2.auth import GoogleAuth
 import sys
 
 ### LOGINNNNNNNN ###
-gauth = GoogleAuth(settings={
-    "client_config_backend": "service",
-    "service_config": {
-        "client_json_dict": dict(st.secrets["GOOGLE_CREDENTIALS"])
-    }
-})
-gauth.ServiceAuth()
-
+gauth = GoogleAuth()
+gauth.LoadCredentialsFile("credentials.json") 
+if gauth.access_token_expired:
+    # Refresh them if expired
+    gauth.Refresh()
+else:
+    # Initialize the saved creds
+    gauth.Authorize()
     
 drive = GoogleDrive(gauth)
 print('successful login with admin role')

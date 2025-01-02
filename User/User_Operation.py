@@ -9,14 +9,42 @@ from pydrive2.drive import GoogleDrive
 from pydrive2.auth import GoogleAuth
 
 ### LOGIN FUNCTION ###
-gauth = GoogleAuth(settings={
-    "client_config_backend": "service",
-    "service_config": {
-        "client_json_dict": dict(st.secrets["GOOGLE_CREDENTIALS"])
-    }
-})
-gauth.ServiceAuth()
+# Decode service account
+# def get_account_credentials(key):
+#     base64_encoded_service_account = key
+#     # Step 1: Decode the Base64-encoded string
+#     decoded_service_account = base64.b64decode(base64_encoded_service_account).decode('utf-8')
+#     # Step 2: Parse the decoded string as JSON
+#     service_credentials = json.loads(decoded_service_account)
+#     return service_credentials
 
+# def login_with_service_account():
+#     settings = {
+#                 "client_config_backend": "service",
+#                 "service_config": {
+#                     "client_json_dict": get_account_credentials(st.secrets.BASE64_ENCODED_SERVICE_ACCOUNT), # from secrets.toml
+#                 }
+#             }
+#     gauth = GoogleAuth(settings=settings)
+#     gauth.ServiceAuth()
+#     return gauth
+
+# ### LOGIN ###
+# drive = GoogleDrive(login_with_service_account())
+# print('successful login with user role')
+
+from pydrive2.auth import GoogleAuth
+from pydrive2.drive import GoogleDrive
+
+# Autentikasi Google Drive
+gauth = GoogleAuth()
+gauth.LoadCredentialsFile("credentials.json") 
+if gauth.access_token_expired:
+    # Refresh token jika sudah kadaluarsa
+    gauth.Refresh()
+else:
+    # Otorisasi jika token masih valid
+    gauth.Authorize()
 
 # Koneksi ke Google Drive
 drive = GoogleDrive(gauth)

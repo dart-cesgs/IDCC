@@ -2,6 +2,7 @@
 credentials.json
 client_secrets.json
 credentials_service.json
+youtube212121-0de9fad1d662.json
 .streamlit
 
 # Useless
@@ -9,6 +10,6 @@ __pycache__/
 
 # ENV
 .env
-Google Drive API.ipynb
 service-account-for-user.json
 spreadsheet-connector.json
+Google Drive API.ipynb
