@@ -8,34 +8,6 @@ import json
 from pydrive2.drive import GoogleDrive
 from pydrive2.auth import GoogleAuth
 
-### LOGIN FUNCTION ###
-# Decode service account
-# def get_account_credentials(key):
-#     base64_encoded_service_account = key
-#     # Step 1: Decode the Base64-encoded string
-#     decoded_service_account = base64.b64decode(base64_encoded_service_account).decode('utf-8')
-#     # Step 2: Parse the decoded string as JSON
-#     service_credentials = json.loads(decoded_service_account)
-#     return service_credentials
-
-# def login_with_service_account():
-#     settings = {
-#                 "client_config_backend": "service",
-#                 "service_config": {
-#                     "client_json_dict": get_account_credentials(st.secrets.BASE64_ENCODED_SERVICE_ACCOUNT), # from secrets.toml
-#                 }
-#             }
-#     gauth = GoogleAuth(settings=settings)
-#     gauth.ServiceAuth()
-#     return gauth
-
-# ### LOGIN ###
-# drive = GoogleDrive(login_with_service_account())
-# print('successful login with user role')
-
-from pydrive2.auth import GoogleAuth
-from pydrive2.drive import GoogleDrive
-
 # Autentikasi Google Drive
 gauth = GoogleAuth()
 gauth.LoadCredentialsFile("credentials.json") 
@@ -48,7 +20,7 @@ else:
 
 # Koneksi ke Google Drive
 drive = GoogleDrive(gauth)
-print("Login successful with cesgs.unair@gmail.com")
+print("successful login with user role")
 
 ### FUNCTIONNNNNNN ###
 # Function to get file id by title
@@ -119,13 +91,13 @@ def display_folder_selector_for_upload():
 
     if subfolders:
         folder_titles = [f['title'] for f in subfolders]
+        # Generate a unique key for the widget based on folder ID and depth
         unique_key = f"folder_selector_{folder_id}_{len(st.session_state.upload_selected_folders)}"
         selected_folder = st.selectbox(
             f"Select Folder {st.session_state.upload_selected_folders[-1]['title'] if st.session_state.upload_selected_folders else 'root'}",
             [''] + folder_titles,
-            key=unique_key  # Menggunakan kunci yang unik
+            key=unique_key  # Use the unique key here
         )
-
 
         if selected_folder:
             # Get the folder ID of the selected folder and append to session_state for upload
@@ -133,10 +105,6 @@ def display_folder_selector_for_upload():
             st.session_state.upload_selected_folders.append(folder)
             st.rerun()
 
-    # Display current selected folder path for upload
-    # if st.session_state.upload_selected_folders:
-    #     st.write(f"Current Upload Folder: {' / '.join([folder['title'] for folder in st.session_state.upload_selected_folders])}")
-    
     return st.session_state.upload_selected_folders[-1]['id'] if st.session_state.upload_selected_folders else 'root'
 
 # Function to download file/files
@@ -189,8 +157,10 @@ def create_zip(folder_path):
 ### SECONDARY FUNCTION ###
 @st.cache_resource(ttl=1800) 
 def get_list_of_all_folders_forusers():
-    list_of_folders = drive.ListFile({'q': "mimeType = 'application/vnd.google-apps.folder'"}).GetList()
-    return list_of_folders
+    q1 = drive.ListFile({'q': "'root' in parents and trashed=false"}).GetList() # get all folders in root
+    q2 = drive.ListFile({'q': "sharedWithMe=true and trashed=false"}).GetList() # get all shared folders
+    both_q = q1 + q2
+    return both_q
 
 # Function to get subfolders and files in a folder
 def get_subfolders_and_files(folder_id='root'):
@@ -220,7 +190,6 @@ def display_folder_selector():
             key=unique_key  # Menggunakan kunci yang unik
         )
 
-
         if selected_folder:
             # Get the folder ID of the selected folder and append to session_state
             folder = next(f for f in subfolders if f['title'] == selected_folder)
@@ -228,4 +197,3 @@ def display_folder_selector():
             st.rerun()
     
     return files
-

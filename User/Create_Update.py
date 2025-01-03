@@ -20,11 +20,14 @@ if st.session_state.upload_selected_folders:
         st.session_state.upload_selected_folders.pop()
         st.rerun()
 
-# Add the reset cache button below the folder navigation
+# Display folder selector for upload
+folder_id = 'root' if len(st.session_state.upload_selected_folders) == 0 else st.session_state.upload_selected_folders[-1]['id']
+unique_key = f"folder_selector_{folder_id}_{len(st.session_state.upload_selected_folders)}"
+upload_folder_option = display_folder_selector_for_upload()
+
+# Move the Reset Cache button here, below the folder selector
 show_reset_cache_button()
 
-# Display folder selector for upload
-upload_folder_option = display_folder_selector_for_upload()
 st.divider()
 
 # Upload type selector
