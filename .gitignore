@@ -1,15 +1,20 @@
+# .gitignore
+
 # Credentials
+.streamlit/secrets.toml
 credentials.json
 client_secrets.json
 credentials_service.json
+service-account-for-user.json
+spreadsheet-connector.json
 youtube212121-0de9fad1d662.json
-.streamlit
 
 # Useless
 __pycache__/
+Google Drive API.ipynb
 
 # ENV
 .env
-service-account-for-user.json
-spreadsheet-connector.json
-Google Drive API.ipynb
+
+# Streamlit cache
+.streamlit

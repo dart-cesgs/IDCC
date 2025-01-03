@@ -3,22 +3,20 @@ import streamlit as st
 import zipfile
 import os
 from io import BytesIO
-from pydrive2.drive import GoogleDrive
+import json
+import base64
 from pydrive2.auth import GoogleAuth
-import sys
+from pydrive2.drive import GoogleDrive
 
-### LOGINNNNNNNN ###
+# Decode service account from secrets
+service_account = json.loads(base64.b64decode(st.secrets["BASE64_ENCODED_SERVICE_ACCOUNT"]).decode("utf-8"))
+
+# Authenticate with the service account
 gauth = GoogleAuth()
-gauth.LoadCredentialsFile("credentials.json") 
-if gauth.access_token_expired:
-    # Refresh them if expired
-    gauth.Refresh()
-else:
-    # Initialize the saved creds
-    gauth.Authorize()
-    
+gauth.credentials = service_account
 drive = GoogleDrive(gauth)
-print('successful login with admin role')
+
+print("Successful login with admin role")
 
 ### FUNCTIONNNNNNN ###
 # Function to get file id by title
