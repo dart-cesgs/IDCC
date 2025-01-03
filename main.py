@@ -93,7 +93,6 @@ def login():
             st.error('Username/password is incorrect')
     show_reset_cache_button()  # Tampilkan tombol reset cache
 
-
 # Fungsi Logout
 def logout():
     st.table(pd.DataFrame({'Your Activity': st.session_state.activity}))
