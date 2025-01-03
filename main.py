@@ -95,10 +95,6 @@ def log_activity(activity):
     st.session_state.activity.append(
         f"{st.session_state.name} {activity} at {datetime.datetime.now().strftime('%d %B %Y %H:%M')}"
     )
-    # Update Logs worksheet
-    if st.session_state.logged_in:
-        conn.set_service_account_info(service_account_info)
-        conn.write(data=pd.DataFrame(st.session_state.activity), spreadsheet=spreadsheet_key, worksheet='Logs')
 
 # Login function
 def login():
