@@ -3,7 +3,7 @@ import os
 from Admin.Admin_Operation import upload, display_folder_selector_for_upload
 from main import show_reset_cache_button
 
-st.header("Upload File/Folder to Google Drive")
+st.header("Upload File or Folder to Google Drive")
 
 # Initialize session state for upload process if not present
 if 'upload_selected_folders' not in st.session_state:

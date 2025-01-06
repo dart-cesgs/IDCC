@@ -20,7 +20,7 @@ else:
 
 # Koneksi ke Google Drive
 drive = GoogleDrive(gauth)
-print("successful login with user role")
+print("Login successful with user role")
 
 ### FUNCTIONNNNNNN ###
 # Function to get file id by title
@@ -91,13 +91,13 @@ def display_folder_selector_for_upload():
 
     if subfolders:
         folder_titles = [f['title'] for f in subfolders]
-        # Generate a unique key for the widget based on folder ID and depth
         unique_key = f"folder_selector_{folder_id}_{len(st.session_state.upload_selected_folders)}"
         selected_folder = st.selectbox(
             f"Select Folder {st.session_state.upload_selected_folders[-1]['title'] if st.session_state.upload_selected_folders else 'root'}",
             [''] + folder_titles,
-            key=unique_key  # Use the unique key here
+            key=unique_key  # Menggunakan kunci yang unik
         )
+
 
         if selected_folder:
             # Get the folder ID of the selected folder and append to session_state for upload
@@ -105,6 +105,10 @@ def display_folder_selector_for_upload():
             st.session_state.upload_selected_folders.append(folder)
             st.rerun()
 
+    # Display current selected folder path for upload
+    # if st.session_state.upload_selected_folders:
+    #     st.write(f"Current Upload Folder: {' / '.join([folder['title'] for folder in st.session_state.upload_selected_folders])}")
+    
     return st.session_state.upload_selected_folders[-1]['id'] if st.session_state.upload_selected_folders else 'root'
 
 # Function to download file/files
@@ -189,6 +193,7 @@ def display_folder_selector():
             [''] + folder_titles,
             key=unique_key  # Menggunakan kunci yang unik
         )
+
 
         if selected_folder:
             # Get the folder ID of the selected folder and append to session_state
